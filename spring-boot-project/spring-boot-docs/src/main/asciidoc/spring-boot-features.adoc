@@ -3407,7 +3407,7 @@ These are the standard options that work regardless of the actual implementation
 It is also possible to fine-tune implementation-specific settings by using their respective prefix (`+spring.datasource.hikari.*+`, `+spring.datasource.tomcat.*+`, and `+spring.datasource.dbcp2.*+`).
 Refer to the documentation of the connection pool implementation you are using for more details.
 
-For instance, if you use the https://tomcat.apache.org/tomcat-8.0-doc/jdbc-pool.html#Common_Attributes[Tomcat connection pool], you could customize many additional settings, as shown in the following example:
+For instance, if you use the {tomcat-docs}/jdbc-pool.html#Common_Attributes[Tomcat connection pool], you could customize many additional settings, as shown in the following example:
 
 [source,properties,indent=0,configprops]
 ----
@@ -4445,6 +4445,7 @@ To connect to an LDAP server, make sure you declare a dependency on the `spring-
 If you need to customize connection settings, you can use the `spring.ldap.base` and `spring.ldap.base-environment` properties.
 
 An `LdapContextSource` is auto-configured based on these settings.
+If a `DirContextAuthenticationStrategy` bean is available, it is associated to the auto-configured `LdapContextSource`.
 If you need to customize it, for instance to use a `PooledContextSource`, you can still inject the auto-configured `LdapContextSource`.
 Make sure to flag your customized `ContextSource` as `@Primary` so that the auto-configured `LdapTemplate` uses it.
 
