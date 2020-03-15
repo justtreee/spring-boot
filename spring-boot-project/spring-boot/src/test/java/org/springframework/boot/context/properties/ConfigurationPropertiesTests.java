@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 the original author or authors.
+ * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,6 @@ import static org.mockito.Mockito.verify;
 /**
  * Tests for {@link ConfigurationProperties @ConfigurationProperties}-annotated beans.
  * Covers {@link EnableConfigurationProperties @EnableConfigurationProperties},
- * {@link ConfigurationPropertiesBindingPostProcessorRegistrar},
  * {@link ConfigurationPropertiesBindingPostProcessor} and
  * {@link ConfigurationPropertiesBinder}.
  *
@@ -923,11 +922,9 @@ class ConfigurationPropertiesTests {
 	@Test
 	void boundPropertiesShouldBeRecorded() {
 		load(NestedConfiguration.class, "name=foo", "nested.name=bar");
-		ConfigurationPropertiesBoundPropertiesHolder recorder = this.context.getBean(
-				ConfigurationPropertiesBoundPropertiesHolder.BEAN_NAME,
-				ConfigurationPropertiesBoundPropertiesHolder.class);
-		assertThat(recorder.getProperties().keySet().stream().map(ConfigurationPropertyName::toString)).contains("name",
-				"nested.name");
+		BoundConfigurationProperties bound = BoundConfigurationProperties.get(this.context);
+		Set<ConfigurationPropertyName> keys = bound.getAll().keySet();
+		assertThat(keys.stream().map(ConfigurationPropertyName::toString)).contains("name", "nested.name");
 	}
 
 	private AnnotationConfigApplicationContext load(Class<?> configuration, String... inlinedProperties) {

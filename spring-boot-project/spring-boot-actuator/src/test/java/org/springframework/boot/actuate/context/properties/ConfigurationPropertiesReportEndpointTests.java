@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 the original author or authors.
+ * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,9 @@ import static org.assertj.core.api.Assertions.entry;
  * @author Andy Wilkinson
  * @author Stephane Nicoll
  * @author HaiTao Zhang
+ * @author Chris Bono
  */
+@SuppressWarnings("unchecked")
 class ConfigurationPropertiesReportEndpointTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
@@ -60,26 +62,20 @@ class ConfigurationPropertiesReportEndpointTests {
 	@Test
 	void descriptorWithJavaBeanBindMethodDetectsRelevantProperties() {
 		this.contextRunner.withUserConfiguration(TestPropertiesConfiguration.class).run(assertProperties("test",
-				(properties) -> assertThat(properties).containsOnlyKeys("dbPassword", "myTestProperty", "duration"),
-				(inputs) -> {
-				}));
+				(properties) -> assertThat(properties).containsOnlyKeys("dbPassword", "myTestProperty", "duration")));
 	}
 
 	@Test
 	void descriptorWithValueObjectBindMethodDetectsRelevantProperties() {
 		this.contextRunner.withUserConfiguration(ImmutablePropertiesConfiguration.class).run(assertProperties(
 				"immutable",
-				(properties) -> assertThat(properties).containsOnlyKeys("dbPassword", "myTestProperty", "duration"),
-				(inputs) -> {
-				}));
+				(properties) -> assertThat(properties).containsOnlyKeys("dbPassword", "myTestProperty", "duration")));
 	}
 
 	@Test
 	void descriptorWithValueObjectBindMethodUseDedicatedConstructor() {
-		this.contextRunner.withUserConfiguration(MultiConstructorPropertiesConfiguration.class)
-				.run(assertProperties("multiconstructor",
-						(properties) -> assertThat(properties).containsOnly(entry("name", "test")), (inputs) -> {
-						}));
+		this.contextRunner.withUserConfiguration(MultiConstructorPropertiesConfiguration.class).run(assertProperties(
+				"multiconstructor", (properties) -> assertThat(properties).containsOnly(entry("name", "test"))));
 	}
 
 	@Test
@@ -125,54 +121,44 @@ class ConfigurationPropertiesReportEndpointTests {
 
 	@Test
 	void descriptorDoesNotIncludePropertyWithNullValue() {
-		this.contextRunner.withUserConfiguration(TestPropertiesConfiguration.class).run(assertProperties("test",
-				(properties) -> assertThat(properties).doesNotContainKey("nullValue"), (inputs) -> {
-				}));
+		this.contextRunner.withUserConfiguration(TestPropertiesConfiguration.class)
+				.run(assertProperties("test", (properties) -> assertThat(properties).doesNotContainKey("nullValue")));
 	}
 
 	@Test
 	void descriptorWithDurationProperty() {
 		this.contextRunner.withUserConfiguration(TestPropertiesConfiguration.class).run(assertProperties("test",
-				(properties) -> assertThat(properties.get("duration")).isEqualTo(Duration.ofSeconds(10).toString()),
-				(inputs) -> {
-				}));
+				(properties) -> assertThat(properties.get("duration")).isEqualTo(Duration.ofSeconds(10).toString())));
 	}
 
 	@Test
 	void descriptorWithNonCamelCaseProperty() {
-		this.contextRunner.withUserConfiguration(MixedCasePropertiesConfiguration.class)
-				.run(assertProperties("mixedcase",
-						(properties) -> assertThat(properties.get("myURL")).isEqualTo("https://example.com"),
-						(inputs) -> {
-						}));
+		this.contextRunner.withUserConfiguration(MixedCasePropertiesConfiguration.class).run(assertProperties(
+				"mixedcase", (properties) -> assertThat(properties.get("myURL")).isEqualTo("https://example.com")));
 	}
 
 	@Test
 	void descriptorWithMixedCaseProperty() {
 		this.contextRunner.withUserConfiguration(MixedCasePropertiesConfiguration.class).run(assertProperties(
-				"mixedcase", (properties) -> assertThat(properties.get("mIxedCase")).isEqualTo("mixed"), (inputs) -> {
-				}));
+				"mixedcase", (properties) -> assertThat(properties.get("mIxedCase")).isEqualTo("mixed")));
 	}
 
 	@Test
 	void descriptorWithSingleLetterProperty() {
-		this.contextRunner.withUserConfiguration(MixedCasePropertiesConfiguration.class).run(assertProperties(
-				"mixedcase", (properties) -> assertThat(properties.get("z")).isEqualTo("zzz"), (inputs) -> {
-				}));
+		this.contextRunner.withUserConfiguration(MixedCasePropertiesConfiguration.class)
+				.run(assertProperties("mixedcase", (properties) -> assertThat(properties.get("z")).isEqualTo("zzz")));
 	}
 
 	@Test
 	void descriptorWithSimpleBooleanProperty() {
 		this.contextRunner.withUserConfiguration(BooleanPropertiesConfiguration.class).run(assertProperties("boolean",
-				(properties) -> assertThat(properties.get("simpleBoolean")).isEqualTo(true), (inputs) -> {
-				}));
+				(properties) -> assertThat(properties.get("simpleBoolean")).isEqualTo(true)));
 	}
 
 	@Test
 	void descriptorWithMixedBooleanProperty() {
 		this.contextRunner.withUserConfiguration(BooleanPropertiesConfiguration.class).run(assertProperties("boolean",
-				(properties) -> assertThat(properties.get("mixedBoolean")).isEqualTo(true), (inputs) -> {
-				}));
+				(properties) -> assertThat(properties.get("mixedBoolean")).isEqualTo(true)));
 	}
 
 	@Test
@@ -181,7 +167,6 @@ class ConfigurationPropertiesReportEndpointTests {
 				.run(assertProperties("test", (properties) -> {
 					assertThat(properties.get("dbPassword")).isEqualTo("******");
 					assertThat(properties.get("myTestProperty")).isEqualTo("654321");
-				}, (inputs) -> {
 				}));
 	}
 
@@ -191,7 +176,6 @@ class ConfigurationPropertiesReportEndpointTests {
 				.withPropertyValues("test.keys-to-sanitize=property").run(assertProperties("test", (properties) -> {
 					assertThat(properties.get("dbPassword")).isEqualTo("123456");
 					assertThat(properties.get("myTestProperty")).isEqualTo("******");
-				}, (inputs) -> {
 				}));
 	}
 
@@ -201,7 +185,6 @@ class ConfigurationPropertiesReportEndpointTests {
 				.withPropertyValues("test.keys-to-sanitize=.*pass.*").run(assertProperties("test", (properties) -> {
 					assertThat(properties.get("dbPassword")).isEqualTo("******");
 					assertThat(properties.get("myTestProperty")).isEqualTo("654321");
-				}, (inputs) -> {
 				}));
 	}
 
@@ -215,12 +198,11 @@ class ConfigurationPropertiesReportEndpointTests {
 					assertThat(secrets.get("mine")).isEqualTo("******");
 					assertThat(secrets.get("yours")).isEqualTo("******");
 					assertThat(hidden.get("mine")).isEqualTo("******");
-				}, (inputs) -> {
 				}));
 	}
 
 	@Test
-	void sanitizedUriWithSensitiveInfo() {
+	void sanitizeUriWithSensitiveInfo() {
 		this.contextRunner.withUserConfiguration(SensiblePropertiesConfiguration.class)
 				.withPropertyValues("sensible.sensitiveUri=http://user:password@localhost:8080")
 				.run(assertProperties("sensible", (properties) -> assertThat(properties.get("sensitiveUri"))
@@ -233,7 +215,7 @@ class ConfigurationPropertiesReportEndpointTests {
 	}
 
 	@Test
-	void sanitizedUriWithNoPassword() {
+	void sanitizeUriWithNoPassword() {
 		this.contextRunner.withUserConfiguration(SensiblePropertiesConfiguration.class)
 				.withPropertyValues("sensible.noPasswordUri=http://user:@localhost:8080")
 				.run(assertProperties("sensible", (properties) -> assertThat(properties.get("noPasswordUri"))
@@ -243,6 +225,13 @@ class ConfigurationPropertiesReportEndpointTests {
 							assertThat(noPasswordUri.get("origin"))
 									.isEqualTo("\"sensible.noPasswordUri\" from property source \"test\"");
 						}));
+	}
+
+	@Test
+	void sanitizeAddressesFieldContainingMultipleRawSensitiveUris() {
+		this.contextRunner.withUserConfiguration(SensiblePropertiesConfiguration.class)
+				.run(assertProperties("sensible", (properties) -> assertThat(properties.get("rawSensitiveAddresses"))
+						.isEqualTo("http://user:******@localhost:8080,http://user2:******@localhost:8082")));
 	}
 
 	@Test
@@ -290,6 +279,12 @@ class ConfigurationPropertiesReportEndpointTests {
 					assertThat(somePassword.get("origin")).isEqualTo(
 							"\"sensible.listOfListItems[0][0].some-password\" from property source \"test\"");
 				}));
+	}
+
+	private ContextConsumer<AssertableApplicationContext> assertProperties(String prefix,
+			Consumer<Map<String, Object>> properties) {
+		return assertProperties(prefix, properties, (inputs) -> {
+		});
 	}
 
 	private ContextConsumer<AssertableApplicationContext> assertProperties(String prefix,
@@ -660,6 +655,8 @@ class ConfigurationPropertiesReportEndpointTests {
 
 		private List<String> simpleList = new ArrayList<>();
 
+		private String rawSensitiveAddresses = "http://user:password@localhost:8080,http://user2:password2@localhost:8082";
+
 		private List<ListItem> listItems = new ArrayList<>();
 
 		private List<List<ListItem>> listOfListItems = new ArrayList<>();
@@ -683,6 +680,14 @@ class ConfigurationPropertiesReportEndpointTests {
 
 		public URI getNoPasswordUri() {
 			return this.noPasswordUri;
+		}
+
+		public String getRawSensitiveAddresses() {
+			return this.rawSensitiveAddresses;
+		}
+
+		public void setRawSensitiveAddresses(final String rawSensitiveAddresses) {
+			this.rawSensitiveAddresses = rawSensitiveAddresses;
 		}
 
 		public List<ListItem> getListItems() {

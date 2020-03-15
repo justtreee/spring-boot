@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2019 the original author or authors.
+ * Copyright 2012-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,12 +79,23 @@ public interface Archive extends Iterable<Archive.Entry>, AutoCloseable {
 		throw new IllegalStateException("Unexpected call to getNestedArchives(filter)");
 	}
 
+	/**
+	 * Return a new iterator for the archive entries.
+	 * @see java.lang.Iterable#iterator()
+	 * @deprecated since 2.3.0 in favor of using
+	 * {@link org.springframework.boot.loader.jar.JarFile} to access entries and
+	 * {@link #getNestedArchives(EntryFilter, EntryFilter)} for accessing nested archives.
+	 */
 	@Deprecated
 	@Override
 	Iterator<Entry> iterator();
 
-	default boolean supportsNestedJars() {
-		return true;
+	/**
+	 * Return if the archive is exploded (already unpacked).
+	 * @return if the archive is exploded
+	 */
+	default boolean isExploded() {
+		return false;
 	}
 
 	/**
