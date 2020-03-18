@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.loader.tools.layer.classes;
+package org.springframework.boot.loader.tools.layer.application;
 
-import java.util.List;
-
-import org.springframework.util.AntPathMatcher;
+import java.io.Serializable;
 
 /**
- * An implementation of {@link ResourceFilter} based on the resource location.
+ * A filter that can tell if a resource has been included or excluded.
  *
  * @author Madhura Bhave
  * @since 2.3.0
  */
-public class LocationFilter extends AbstractResourceFilter {
+public interface ResourceFilter extends Serializable {
 
-	private static final AntPathMatcher MATCHER = new AntPathMatcher();
+	/**
+	 * Return true if the resource is included by the filter.
+	 * @param resourceName the resource name
+	 * @return true if the resource is included
+	 */
+	boolean isResourceIncluded(String resourceName);
 
-	public LocationFilter(List<String> includes, List<String> excludes) {
-		super(includes, excludes);
-	}
-
-	@Override
-	protected boolean isMatch(String resourceName, List<String> toMatch) {
-		return toMatch.stream().anyMatch((pattern) -> MATCHER.match(pattern, resourceName));
-	}
+	/**
+	 * Return true if the resource is included by the filter.
+	 * @param resourceName the resource name
+	 * @return true if the resource is excluded
+	 */
+	boolean isResourceExcluded(String resourceName);
 
 }

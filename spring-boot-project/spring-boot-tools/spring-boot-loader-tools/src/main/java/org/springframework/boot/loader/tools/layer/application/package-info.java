@@ -14,28 +14,8 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.loader.tools.layer.classes;
-
 /**
- * A filter that can tell if a resource has been included or excluded.
+ * Support for custom layers for everything in BOOT-INF/classes.
  *
- * @author Madhura Bhave
- * @since 2.3.0
  */
-public interface ResourceFilter {
-
-	/**
-	 * Return true if the resource is included by the filter.
-	 * @param resourceName the resource name
-	 * @return true if the resource is included
-	 */
-	boolean isResourceIncluded(String resourceName);
-
-	/**
-	 * Return true if the resource is included by the filter.
-	 * @param resourceName the resource name
-	 * @return true if the resource is excluded
-	 */
-	boolean isResourceExcluded(String resourceName);
-
-}
+package org.springframework.boot.loader.tools.layer.application;

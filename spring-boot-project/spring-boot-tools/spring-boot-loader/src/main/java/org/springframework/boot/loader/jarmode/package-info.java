@@ -14,24 +14,9 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.loader.tools.layer.classes;
-
-import org.springframework.boot.loader.tools.Layer;
-
 /**
- * A strategy used to match a resource to a layer.
+ * Support for launching the JAR using jarmode.
  *
- * @author Madhura Bhave
- * @since 2.3.0
+ * @see org.springframework.boot.loader.jarmode.JarModeLauncher
  */
-public interface ResourceStrategy {
-
-	/**
-	 * Return a {@link Layer} for the given resource. If no matching layer is found,
-	 * {@code null} is returned.
-	 * @param resourceName the name of the resource
-	 * @return the matching layer or {@code null}
-	 */
-	Layer getMatchingLayer(String resourceName);
-
-}
+package org.springframework.boot.loader.jarmode;
